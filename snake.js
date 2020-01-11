@@ -115,18 +115,6 @@ const attachEventListeners = snake => {
   document.body.onkeydown = handleKeyPress.bind(null, snake);
 };
 
-const animateSnakes = (snake, ghostSnake) => {
-  moveAndDrawSnake(snake);
-  moveAndDrawSnake(ghostSnake);
-};
-
-const randomlyTurnSnake = snake => {
-  let x = Math.random() * 100;
-  if (x > 50) {
-    snake.turnLeft();
-  }
-};
-
 const drawFood = function(food) {
   let [colId, rowId] = food.position;
   const cell = getCell(colId, rowId);
@@ -146,6 +134,19 @@ const setup = game => {
   createGrids();
   drawSnake(game.snake);
   drawSnake(game.ghostSnake);
+  drawFood(game.food);
+};
+
+const animateSnakes = (snake, ghostSnake) => {
+  moveAndDrawSnake(snake);
+  moveAndDrawSnake(ghostSnake);
+};
+
+const randomlyTurnSnake = snake => {
+  let x = Math.random() * 100;
+  if (x > 50) {
+    snake.turnLeft();
+  }
 };
 
 const initSnake = () => {
@@ -169,7 +170,8 @@ const initGhostSnake = () => {
 const main = function() {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
-  const game = new Game(snake, ghostSnake);
+  const food = new Food(5, 5);
+  const game = new Game(snake, ghostSnake, food);
   setup(game);
   setInterval(animateSnakes, 200, snake, ghostSnake);
   setInterval(randomlyTurnSnake, 500, ghostSnake);
