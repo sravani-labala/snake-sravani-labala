@@ -2,6 +2,7 @@ const EAST = 0;
 const NORTH = 1;
 const WEST = 2;
 const SOUTH = 3;
+
 class Direction {
   constructor(initialHeading) {
     this.heading = initialHeading;
@@ -17,7 +18,19 @@ class Direction {
   }
 
   turnLeft() {
-    this.heading = (this.heading + 1) % 4;
+    this.heading = 2;
+  }
+
+  turnRight() {
+    this.heading = 0;
+  }
+
+  turnUp() {
+    this.heading = 1;
+  }
+
+  turnDown() {
+    this.heading = 3;
   }
 }
 
@@ -39,6 +52,18 @@ class Snake {
 
   turnLeft() {
     this.direction.turnLeft();
+  }
+
+  turnRight() {
+    this.direction.turnRight();
+  }
+
+  turnUp() {
+    this.direction.turnUp();
+  }
+
+  turnDown() {
+    this.direction.turnDown();
   }
 
   move() {
@@ -102,7 +127,23 @@ const drawSnake = function(snake) {
 };
 
 const handleKeyPress = snake => {
-  snake.turnLeft();
+  switch (event.key) {
+    case 'ArrowLeft':
+      snake.turnLeft();
+      break;
+
+    case 'ArrowRight':
+      snake.turnRight();
+      break;
+
+    case 'ArrowUp':
+      snake.turnUp();
+      break;
+
+    case 'ArrowDown':
+      snake.turnDown();
+      break;
+  }
 };
 
 const moveAndDrawSnake = function(snake) {
@@ -149,6 +190,12 @@ const randomlyTurnSnake = snake => {
   }
 };
 
+const getFoodPosition = function() {
+  const xPosition = Math.round(Math.random() * 90) + 5;
+  const yPosition = Math.round(Math.random() * 50) + 5;
+  return [xPosition, yPosition];
+};
+
 const initSnake = () => {
   const snakePosition = [
     [40, 25],
@@ -170,7 +217,8 @@ const initGhostSnake = () => {
 const main = function() {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
-  const food = new Food(5, 5);
+  const [x, y] = getFoodPosition();
+  const food = new Food(x, y);
   const game = new Game(snake, ghostSnake, food);
   setup(game);
   setInterval(animateSnakes, 200, snake, ghostSnake);
