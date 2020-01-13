@@ -71,7 +71,7 @@ const drawFood = function(food) {
   cell.classList.add('food');
 };
 
-const removePreviousFood = function(food) {
+const eraseFood = function(food) {
   let [colId, rowId] = food;
   const cell = getCell(colId, rowId);
   cell.classList.remove('food');
@@ -126,7 +126,7 @@ const runGame = function(game) {
   randomlyTurnSnake(game.ghostSnake);
   animateSnakes(game.snake, game.ghostSnake);
   if (game.isFoodEaten()) {
-    removePreviousFood(game.food.position);
+    eraseFood(game.food.position);
     game.food.update();
     game.snake.grow();
     game.updateScore();
@@ -137,9 +137,9 @@ const runGame = function(game) {
 
 const initSnake = () => {
   const snakePosition = [
-    [40, 25],
-    [41, 25],
-    [42, 25]
+    [20, 25],
+    [21, 25],
+    [22, 25]
   ];
   return new Snake(snakePosition, new Direction(EAST), 'snake');
 };
@@ -156,8 +156,8 @@ const initGhostSnake = () => {
 const main = function() {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
-  const food = new Food(20, 20);
+  const food = new Food(5, 5);
   const game = new Game(snake, ghostSnake, food);
   setup(game);
-  setInterval(runGame, 200, game);
+  setInterval(runGame, 500, game);
 };
