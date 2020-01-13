@@ -3,98 +3,6 @@ const NORTH = 1;
 const WEST = 2;
 const SOUTH = 3;
 
-class Direction {
-  constructor(initialHeading) {
-    this.heading = initialHeading;
-    this.deltas = {};
-    this.deltas[EAST] = [1, 0];
-    this.deltas[WEST] = [-1, 0];
-    this.deltas[NORTH] = [0, -1];
-    this.deltas[SOUTH] = [0, 1];
-  }
-
-  get delta() {
-    return this.deltas[this.heading];
-  }
-
-  turnLeft() {
-    if (this.heading != 0) this.heading = 2;
-  }
-
-  turnRight() {
-    if (this.heading != 2) this.heading = 0;
-  }
-
-  turnUp() {
-    if (this.heading != 3) this.heading = 1;
-  }
-
-  turnDown() {
-    if (this.heading != 1) this.heading = 3;
-  }
-}
-
-class Snake {
-  constructor(positions, direction, type) {
-    this.positions = positions.slice();
-    this.direction = direction;
-    this.type = type;
-    this.previousTail = [0, 0];
-  }
-
-  get location() {
-    return this.positions.slice();
-  }
-
-  get species() {
-    return this.type;
-  }
-
-  turnLeft() {
-    this.direction.turnLeft();
-  }
-
-  turnRight() {
-    this.direction.turnRight();
-  }
-
-  turnUp() {
-    this.direction.turnUp();
-  }
-
-  turnDown() {
-    this.direction.turnDown();
-  }
-
-  move() {
-    const [headX, headY] = this.positions[this.positions.length - 1];
-    this.previousTail = this.positions.shift();
-    const [deltaX, deltaY] = this.direction.delta;
-    this.positions.push([headX + deltaX, headY + deltaY]);
-  }
-
-  grow() {
-    const [headX, headY] = this.positions[this.positions.length - 1];
-    const [deltaX, deltaY] = this.direction.delta;
-    this.positions.push([headX + deltaX, headY + deltaY]);
-  }
-}
-
-class Food {
-  constructor(colId, rowId) {
-    this.colId = colId;
-    this.rowId = rowId;
-  }
-  get position() {
-    return [this.colId, this.rowId];
-  }
-  update() {
-    const xPosition = Math.round(Math.random() * 90) + 5;
-    const yPosition = Math.round(Math.random() * 50) + 5;
-    [this.colId, this.rowId] = [xPosition, yPosition];
-  }
-}
-
 const NUM_OF_COLS = 100;
 const NUM_OF_ROWS = 60;
 const GRID_ID = 'grid';
@@ -157,24 +65,10 @@ const attachEventListeners = snake => {
   document.body.onkeydown = handleKeyPress.bind(null, snake);
 };
 
-const moveAndDrawSnake = function(snake) {
-  snake.move();
-  eraseTail(snake);
-  drawSnake(snake);
-};
-
 const drawFood = function(food) {
   let [colId, rowId] = food.position;
   const cell = getCell(colId, rowId);
   cell.classList.add('food');
-};
-
-const setup = game => {
-  attachEventListeners(game.snake);
-  createGrids();
-  drawSnake(game.snake);
-  drawSnake(game.ghostSnake);
-  drawFood(game.food);
 };
 
 const removePreviousFood = function(food) {
@@ -183,19 +77,20 @@ const removePreviousFood = function(food) {
   cell.classList.remove('food');
 };
 
-class Game {
-  constructor(snake, ghostSnake, food) {
-    this.snake = snake;
-    this.ghostSnake = ghostSnake;
-    this.food = food;
-  }
+const moveAndDrawSnake = function(snake) {
+  snake.move();
+  eraseTail(snake);
+  drawSnake(snake);
+};
 
-  isFoodEaten() {
-    const [foodColId, foodRowId] = this.food.position;
-    const [snakeColID, snakeRowId] = this.snake.location.pop();
-    return snakeColID == foodColId && foodRowId == snakeRowId;
-  }
-}
+const setup = game => {
+  attachEventListeners(game.snake);
+  createGrids();
+  drawSnake(game.snake);
+  drawSnake(game.ghostSnake);
+  drawFood(game.food);
+  drawScoreBoard(game.score);
+};
 
 const animateSnakes = (snake, ghostSnake) => {
   moveAndDrawSnake(snake);
@@ -222,6 +117,11 @@ const randomlyTurnSnake = snake => {
   }
 };
 
+const drawScoreBoard = function(score) {
+  const scoreBoard = document.getElementById('score');
+  scoreBoard.innerText = score;
+};
+
 const runGame = function(game) {
   randomlyTurnSnake(game.ghostSnake);
   animateSnakes(game.snake, game.ghostSnake);
@@ -229,6 +129,8 @@ const runGame = function(game) {
     removePreviousFood(game.food.position);
     game.food.update();
     game.snake.grow();
+    game.updateScore();
+    drawScoreBoard(game.score);
     drawFood(game.food);
   }
 };
