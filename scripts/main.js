@@ -159,5 +159,12 @@ const main = function() {
   const food = new Food(5, 5);
   const game = new Game(snake, ghostSnake, food);
   setup(game);
-  setInterval(runGame, 500, game);
+  const a = setInterval(() => {
+    if (game.isGameOver()) {
+      clearInterval(a);
+      alert('game over');
+      return;
+    }
+    runGame(game);
+  }, 200);
 };

@@ -19,5 +19,12 @@
 --DONE-- * Generate food periodically 
 --DONE-- * Allow snake to eat food when food becomes available
 --DONE-- * Upon eating the food, snake should grow tall
-* If snake touches itself or the walls, the game should be over
+--DONE-- * If snake touches itself or the walls, the game should be over
 --DONE-- * Add a scoring mechanism
+
+
+
+* The game over should not be in alert it should display a page with score
+* Give the ghost snake the ability to eat the food.
+* The game ends when your snake touches the ghost snake.
+* Provide a special type of food that increases the score without changing the length of the snake.

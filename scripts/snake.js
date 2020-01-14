@@ -42,4 +42,20 @@ class Snake {
     const [deltaX, deltaY] = this.direction.delta;
     this.positions.push([headX + deltaX, headY + deltaY]);
   }
+
+  isSnakeTouchedItself() {
+    const snake = this.location;
+    const head = snake.shift();
+    const isCollide = function(position) {
+      return head[0] == position[0] && head[1] == position[1];
+    };
+    return snake.some(isCollide);
+  }
+
+  isSnakeTouchedWall() {
+    const head = this.location.pop();
+    return (
+      [NUM_OF_ROWS, 0].includes(head[1]) || [NUM_OF_COLS, 0].includes(head[0])
+    );
+  }
 }

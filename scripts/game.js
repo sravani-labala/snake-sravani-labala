@@ -15,4 +15,8 @@ class Game {
   updateScore() {
     return ++this.score;
   }
+
+  isGameOver() {
+    return this.snake.isSnakeTouchedItself() || this.snake.isSnakeTouchedWall();
+  }
 }
