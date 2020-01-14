@@ -1,9 +1,9 @@
 class Game {
-  constructor(snake, ghostSnake, food) {
+  constructor(snake, ghostSnake, food, score) {
     this.snake = snake;
     this.ghostSnake = ghostSnake;
     this.food = food;
-    this.score = 0;
+    this.score = score;
   }
 
   isFoodEaten() {
@@ -13,7 +13,7 @@ class Game {
   }
 
   updateScore() {
-    return ++this.score;
+    return this.score.update();
   }
 
   isSnakeTouchedItself() {
@@ -37,7 +37,7 @@ class Game {
   }
 
   get status() {
-    return this.score;
+    return this.score.points;
   }
 
   growSnake() {

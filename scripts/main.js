@@ -89,7 +89,7 @@ const setup = game => {
   drawSnake(game.snake);
   drawSnake(game.ghostSnake);
   drawFood(game.food);
-  drawScoreBoard(game.score);
+  drawScoreBoard(game.status);
 };
 
 const animateSnakes = (snake, ghostSnake) => {
@@ -140,7 +140,7 @@ const runGame = function(game) {
     game.updateFood();
     game.growSnake();
     game.updateScore();
-    drawScoreBoard(game.score);
+    drawScoreBoard(game.status);
     drawFood(game.food);
   }
 };
@@ -166,12 +166,13 @@ const initGhostSnake = () => {
 const main = function() {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
-  const food = new Food(5, 5);
-  const game = new Game(snake, ghostSnake, food);
+  const food = new Food(20, 20);
+  const score = new ScoreBoard(0);
+  const game = new Game(snake, ghostSnake, food, score);
   setup(game);
-  const intervalId = setInterval(() => {
+  const a = setInterval(() => {
     if (game.isGameOver()) {
-      clearInterval(intervalId);
+      clearInterval(a);
       gameOver(game.status);
       return;
     }
