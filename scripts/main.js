@@ -122,13 +122,23 @@ const drawScoreBoard = function(score) {
   scoreBoard.innerText = score;
 };
 
+const gameOver = function(points) {
+  const gameBoard = document.getElementById('gameBoard');
+  const finishGame = document.getElementById('gameOver');
+  gameBoard.style.display = 'none';
+  finishGame.style.display = 'block';
+  const score = document.createElement('p');
+  score.innerText = `your score is ${points}`;
+  finishGame.appendChild(score);
+};
+
 const runGame = function(game) {
   randomlyTurnSnake(game.ghostSnake);
   animateSnakes(game.snake, game.ghostSnake);
   if (game.isFoodEaten()) {
     eraseFood(game.food.position);
-    game.food.update();
-    game.snake.grow();
+    game.updateFood();
+    game.growSnake();
     game.updateScore();
     drawScoreBoard(game.score);
     drawFood(game.food);
@@ -159,10 +169,10 @@ const main = function() {
   const food = new Food(5, 5);
   const game = new Game(snake, ghostSnake, food);
   setup(game);
-  const a = setInterval(() => {
+  const intervalId = setInterval(() => {
     if (game.isGameOver()) {
-      clearInterval(a);
-      alert('game over');
+      clearInterval(intervalId);
+      gameOver(game.status);
       return;
     }
     runGame(game);

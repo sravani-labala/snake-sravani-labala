@@ -24,7 +24,9 @@
 
 
 
-* The game over should not be in alert it should display a page with score
+--DONE-- * The game over should not be in alert it should display a page with score
+            * The game over should be little more clearer with the score message
+
 * Give the ghost snake the ability to eat the food.
 * The game ends when your snake touches the ghost snake.
 * Provide a special type of food that increases the score without changing the length of the snake.
