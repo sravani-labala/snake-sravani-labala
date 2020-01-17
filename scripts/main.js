@@ -1,8 +1,3 @@
-const EAST = 0;
-const NORTH = 1;
-const WEST = 2;
-const SOUTH = 3;
-
 const NUM_OF_COLS = 100;
 const NUM_OF_ROWS = 60;
 const GRID_ID = 'grid';
@@ -26,19 +21,6 @@ const createGrids = function() {
       createCell(grid, x, y);
     }
   }
-};
-
-const eraseTail = function(snake) {
-  let [colId, rowId] = snake.previousTail;
-  const cell = getCell(colId, rowId);
-  cell.classList.remove(snake.species);
-};
-
-const drawSnake = function(snake) {
-  snake.location.forEach(([colId, rowId]) => {
-    const cell = getCell(colId, rowId);
-    cell.classList.add(snake.species);
-  });
 };
 
 const handleKeyPress = snake => {
@@ -65,58 +47,6 @@ const attachEventListeners = snake => {
   document.body.onkeydown = handleKeyPress.bind(null, snake);
 };
 
-const drawFood = function(food) {
-  let [colId, rowId] = food.position;
-  const cell = getCell(colId, rowId);
-  cell.classList.add('food');
-};
-
-const eraseFood = function(food) {
-  let [colId, rowId] = food;
-  const cell = getCell(colId, rowId);
-  cell.classList.remove('food');
-};
-
-const moveAndDrawSnake = function(snake) {
-  snake.move();
-  eraseTail(snake);
-  drawSnake(snake);
-};
-
-const setup = game => {
-  attachEventListeners(game.snake);
-  createGrids();
-  drawSnake(game.snake);
-  drawSnake(game.ghostSnake);
-  drawFood(game.food);
-  drawScoreBoard(game.status);
-};
-
-const animateSnakes = (snake, ghostSnake) => {
-  moveAndDrawSnake(snake);
-  moveAndDrawSnake(ghostSnake);
-};
-
-const randomlyTurnSnake = snake => {
-  let x = Math.round(Math.random() * 150);
-  if (x < 25) {
-    snake.turnLeft();
-    return;
-  }
-  if (x < 50) {
-    snake.turnRight();
-    return;
-  }
-  if (x < 75) {
-    snake.turnUp();
-    return;
-  }
-  if (x < 100) {
-    snake.turnDown();
-    return;
-  }
-};
-
 const drawScoreBoard = function(score) {
   const scoreBoard = document.getElementById('score');
   scoreBoard.innerText = score;
@@ -132,17 +62,66 @@ const gameOver = function(points) {
   finishGame.appendChild(score);
 };
 
+const drawFood = function(food) {
+  let [colId, rowId] = food;
+  const cell = getCell(colId, rowId);
+  cell.classList.add('food');
+};
+
+const eraseFood = function(food) {
+  let [colId, rowId] = food;
+  const cell = getCell(colId, rowId);
+  cell.classList.remove('food');
+};
+
+const eraseTail = function(snake) {
+  let [colId, rowId] = snake.previousTail;
+  const cell = getCell(colId, rowId);
+  cell.classList.remove(snake.species);
+};
+
+const drawSnake = function(snake) {
+  snake.location.forEach(([colId, rowId]) => {
+    const cell = getCell(colId, rowId);
+    cell.classList.add(snake.species);
+  });
+};
+
+const moveAndDrawSnake = function(snake) {
+  eraseTail(snake);
+  drawSnake(snake);
+};
+
+const setup = game => {
+  attachEventListeners(game.snake);
+  createGrids();
+  const { snake, ghostSnake, food, score } = game.status;
+  drawSnake(snake);
+  drawSnake(ghostSnake);
+  drawFood(food.current);
+  drawScoreBoard(score);
+};
+
+const animateSnakes = (snake, ghostSnake) => {
+  moveAndDrawSnake(snake);
+  moveAndDrawSnake(ghostSnake);
+};
+
+const randomlyTurnSnake = snake => {
+  const directions = ['turnLeft', 'turnRight', 'turnUp', 'turnDown'];
+  const pickDirection = Math.round(Math.random() * 3);
+  snake[directions[pickDirection]]();
+};
+
 const runGame = function(game) {
   randomlyTurnSnake(game.ghostSnake);
-  animateSnakes(game.snake, game.ghostSnake);
-  if (game.isFoodEaten()) {
-    eraseFood(game.food.position);
-    game.updateFood();
-    game.growSnake();
-    game.updateScore();
-    drawScoreBoard(game.status);
-    drawFood(game.food);
-  }
+  const { snake, ghostSnake, food, score } = game.status;
+  animateSnakes(snake, ghostSnake);
+  game.moveSnakes();
+  game.update();
+  eraseFood(food.previous);
+  drawScoreBoard(score);
+  drawFood(food.current);
 };
 
 const initSnake = () => {
@@ -163,6 +142,17 @@ const initGhostSnake = () => {
   return new Snake(ghostSnakePosition, new Direction(SOUTH), 'ghost');
 };
 
+const start = function(game) {
+  const intervalId = setInterval(() => {
+    if (game.isGameOver()) {
+      clearInterval(intervalId);
+      gameOver(game.status.score);
+      return;
+    }
+    runGame(game);
+  }, 200);
+};
+
 const main = function() {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
@@ -170,12 +160,5 @@ const main = function() {
   const score = new ScoreBoard(0);
   const game = new Game(snake, ghostSnake, food, score);
   setup(game);
-  const a = setInterval(() => {
-    if (game.isGameOver()) {
-      clearInterval(a);
-      gameOver(game.status);
-      return;
-    }
-    runGame(game);
-  }, 200);
+  start(game);
 };

@@ -28,7 +28,8 @@ class Game {
   isSnakeTouchedWall() {
     const head = this.snake.location.pop();
     return (
-      [NUM_OF_ROWS, 0].includes(head[1]) || [NUM_OF_COLS, 0].includes(head[0])
+      [NUM_OF_ROWS - 1, 0].includes(head[1]) ||
+      [NUM_OF_COLS - 1, 0].includes(head[0])
     );
   }
 
@@ -37,7 +38,28 @@ class Game {
   }
 
   get status() {
-    return this.score.points;
+    return {
+      score: this.score.points,
+      snake: {
+        location: this.snake.location,
+        previousTail: this.snake.previousTail.slice(),
+        species: this.snake.species
+      },
+      ghostSnake: {
+        location: this.ghostSnake.location,
+        previousTail: this.ghostSnake.previousTail.slice(),
+        species: this.ghostSnake.species
+      },
+      food: {
+        previous: this.food.previousPosition,
+        current: this.food.position
+      }
+    };
+  }
+
+  moveSnakes() {
+    this.snake.move();
+    this.ghostSnake.move();
   }
 
   growSnake() {
@@ -45,8 +67,14 @@ class Game {
   }
 
   updateFood() {
-    const xPosition = Math.round(Math.random() * 90) + 5;
-    const yPosition = Math.round(Math.random() * 50) + 5;
-    this.food = new Food(xPosition, yPosition);
+    this.food.update();
+  }
+
+  update() {
+    if (this.isFoodEaten()) {
+      this.updateFood();
+      this.growSnake();
+      this.updateScore();
+    }
   }
 }

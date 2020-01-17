@@ -1,3 +1,8 @@
+const EAST = 0;
+const NORTH = 1;
+const WEST = 2;
+const SOUTH = 3;
+
 class Direction {
   constructor(initialHeading) {
     this.heading = initialHeading;
@@ -13,18 +18,18 @@ class Direction {
   }
 
   turnLeft() {
-    if (this.heading != 0) this.heading = 2;
+    if (this.heading != EAST) this.heading = WEST;
   }
 
   turnRight() {
-    if (this.heading != 2) this.heading = 0;
+    if (this.heading != WEST) this.heading = EAST;
   }
 
   turnUp() {
-    if (this.heading != 3) this.heading = 1;
+    if (this.heading != SOUTH) this.heading = NORTH;
   }
 
   turnDown() {
-    if (this.heading != 1) this.heading = 3;
+    if (this.heading != NORTH) this.heading = SOUTH;
   }
 }

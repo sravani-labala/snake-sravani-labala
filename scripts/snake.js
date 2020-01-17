@@ -30,15 +30,19 @@ class Snake {
     this.direction.turnDown();
   }
 
+  get head() {
+    return this.positions[this.positions.length - 1];
+  }
+
   move() {
-    const [headX, headY] = this.positions[this.positions.length - 1];
+    const [headX, headY] = this.head;
     this.previousTail = this.positions.shift();
     const [deltaX, deltaY] = this.direction.delta;
     this.positions.push([headX + deltaX, headY + deltaY]);
   }
 
   grow() {
-    const [headX, headY] = this.positions[this.positions.length - 1];
+    const [headX, headY] = this.head;
     const [deltaX, deltaY] = this.direction.delta;
     this.positions.push([headX + deltaX, headY + deltaY]);
   }
