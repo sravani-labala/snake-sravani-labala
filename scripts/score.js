@@ -1,11 +1,12 @@
 class ScoreBoard {
+  #score;
   constructor(initialScore) {
-    this.score = initialScore;
+    this.#score = initialScore;
   }
   update() {
-    this.score += 5;
+    this.#score += 5;
   }
   get points() {
-    return this.score;
+    return this.#score;
   }
 }

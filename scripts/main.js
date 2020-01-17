@@ -23,28 +23,28 @@ const createGrids = function() {
   }
 };
 
-const handleKeyPress = snake => {
+const handleKeyPress = game => {
   switch (event.key) {
     case 'ArrowLeft':
-      snake.turnLeft();
+      game.turnSnake('turnLeft');
       break;
 
     case 'ArrowRight':
-      snake.turnRight();
+      game.turnSnake('turnRight');
       break;
 
     case 'ArrowUp':
-      snake.turnUp();
+      game.turnSnake('turnUp');
       break;
 
     case 'ArrowDown':
-      snake.turnDown();
+      game.turnSnake('turnDown');
       break;
   }
 };
 
-const attachEventListeners = snake => {
-  document.body.onkeydown = handleKeyPress.bind(null, snake);
+const attachEventListeners = game => {
+  document.body.onkeydown = handleKeyPress.bind(null, game);
 };
 
 const drawScoreBoard = function(score) {
@@ -93,7 +93,7 @@ const moveAndDrawSnake = function(snake) {
 };
 
 const setup = game => {
-  attachEventListeners(game.snake);
+  attachEventListeners(game);
   createGrids();
   const { snake, ghostSnake, food, score } = game.status;
   drawSnake(snake);
@@ -107,17 +107,16 @@ const animateSnakes = (snake, ghostSnake) => {
   moveAndDrawSnake(ghostSnake);
 };
 
-const randomlyTurnSnake = snake => {
+const randomlyTurnSnake = game => {
   const directions = ['turnLeft', 'turnRight', 'turnUp', 'turnDown'];
   const pickDirection = Math.round(Math.random() * 3);
-  snake[directions[pickDirection]]();
+  game.turnGhostSnake(directions[pickDirection]);
 };
 
 const runGame = function(game) {
-  randomlyTurnSnake(game.ghostSnake);
+  randomlyTurnSnake(game);
   const { snake, ghostSnake, food, score } = game.status;
   animateSnakes(snake, ghostSnake);
-  game.moveSnakes();
   game.update();
   eraseFood(food.previous);
   drawScoreBoard(score);

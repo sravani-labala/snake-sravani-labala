@@ -1,23 +1,27 @@
 class Game {
+  #snake;
+  #ghostSnake;
+  #food;
+  #score;
   constructor(snake, ghostSnake, food, score) {
-    this.snake = snake;
-    this.ghostSnake = ghostSnake;
-    this.food = food;
-    this.score = score;
+    this.#snake = snake;
+    this.#ghostSnake = ghostSnake;
+    this.#food = food;
+    this.#score = score;
   }
 
   isFoodEaten() {
-    const [foodColId, foodRowId] = this.food.position;
-    const [snakeColID, snakeRowId] = this.snake.location.pop();
+    const [foodColId, foodRowId] = this.#food.position;
+    const [snakeColID, snakeRowId] = this.#snake.location.pop();
     return snakeColID == foodColId && foodRowId == snakeRowId;
   }
 
   updateScore() {
-    return this.score.update();
+    return this.#score.update();
   }
 
   isSnakeTouchedItself() {
-    const snake = this.snake.location;
+    const snake = this.#snake.location;
     const head = snake.shift();
     const isCollide = function(position) {
       return head[0] == position[0] && head[1] == position[1];
@@ -26,7 +30,7 @@ class Game {
   }
 
   isSnakeTouchedWall() {
-    const head = this.snake.location.pop();
+    const head = this.#snake.location.pop();
     return (
       [NUM_OF_ROWS - 1, 0].includes(head[1]) ||
       [NUM_OF_COLS - 1, 0].includes(head[0])
@@ -39,42 +43,51 @@ class Game {
 
   get status() {
     return {
-      score: this.score.points,
+      score: this.#score.points,
       snake: {
-        location: this.snake.location,
-        previousTail: this.snake.previousTail.slice(),
-        species: this.snake.species
+        location: this.#snake.location,
+        previousTail: this.#snake.previousTailPosition.slice(),
+        species: this.#snake.species
       },
       ghostSnake: {
-        location: this.ghostSnake.location,
-        previousTail: this.ghostSnake.previousTail.slice(),
-        species: this.ghostSnake.species
+        location: this.#ghostSnake.location,
+        previousTail: this.#ghostSnake.previousTailPosition.slice(),
+        species: this.#ghostSnake.species
       },
       food: {
-        previous: this.food.previousPosition,
-        current: this.food.position
+        previous: this.#food.previousPosition,
+        current: this.#food.position
       }
     };
   }
 
   moveSnakes() {
-    this.snake.move();
-    this.ghostSnake.move();
+    this.#snake.move();
+    this.#ghostSnake.move();
   }
 
   growSnake() {
-    this.snake.grow();
+    this.#snake.grow();
   }
 
   updateFood() {
-    this.food.update();
+    this.#food.update();
   }
 
   update() {
+    this.moveSnakes();
     if (this.isFoodEaten()) {
       this.updateFood();
       this.growSnake();
       this.updateScore();
     }
+  }
+
+  turnGhostSnake(direction) {
+    this.#ghostSnake[direction]();
+  }
+
+  turnSnake(direction) {
+    this.#snake[direction]();
   }
 }
